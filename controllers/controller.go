@@ -49,6 +49,11 @@ func Store(c *gin.Context) {
 			"error": err.Error()})
 		return
 	}
+	if err := models.Validate(&aluno); err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error()})
+		return
+	}
 	database.DB.Create(&aluno)
 	c.JSON(http.StatusOK, aluno)
 }
@@ -57,12 +62,25 @@ func Update(c *gin.Context) {
 	var aluno models.Aluno
 	id := c.Params.ByName("id")
 	database.DB.First(&aluno, id)
+
+
+	if aluno.ID == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Not found": "Aluno não encontrado"})
+		return
+	}
+
 	if err := c.ShouldBindJSON(&aluno); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error()})
 		return
 	}
-	database.DB.Model(&aluno).UpdateColumns(aluno)
+	if err := models.Validate(&aluno); err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error()})
+		return
+	}
+	database.DB.Model(&aluno).Where(aluno.ID, id).UpdateColumns(aluno)
 	c.JSON(http.StatusOK, aluno)
 }
 

@@ -17,6 +17,6 @@ services:
       PGADMIN_DEFAULT_EMAIL: "ropehapi@gmail.com"
       PGADMIN_DEFAULT_PASSWORD: "159357"
     ports:
-      - "54321:80"
+      - "951:80"
     depends_on:
       - postgres
